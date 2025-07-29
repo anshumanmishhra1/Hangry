@@ -3,12 +3,13 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import { connectDB } from "./config/db.js";
+import { connectDB } from "./config/db.js"; 
 import foodRouter from "./routes/foodRoute.js";
 import userRouter from "./routes/userRoute.js";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 import razorpayRouter from './routes/razorpayRoutes.js';
+import cookieParser from "cookie-parser";
 
 // App config
 const app = express();
@@ -16,11 +17,13 @@ const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 
 // ✅ CORS Setup for Multiple Allowed Origins
 const allowedOrigins = [
   "https://hangryfood.onrender.com",
   "https://food-del-frontend-k60s.onrender.com",
+  "http://localhost:5173",  // (optional for local dev)
 ];
 
 app.use(
@@ -39,22 +42,22 @@ app.use(
 // DB connection
 connectDB();
 
-// API endpoints
-app.use("/api/food", foodRouter);
+// Static file serving
 app.use("/images", express.static('uploads'));
+
+// Routes
+app.use("/api/food", foodRouter);
 app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/razor", razorpayRouter);
 
-// Test endpoint
+// Test route
 app.get("/", (req, res) => {
-  res.send("API Working");
+  res.send("API Working ✅");
 });
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server Started on http://localhost:${port}`);
+  console.log(`🚀 Server running on http://localhost:${port}`);
 });
-
-// YOU CAN SAVE UR DATABASE IN THIS COMMENT IF U WANT -->
