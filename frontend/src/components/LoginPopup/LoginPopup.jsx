@@ -23,28 +23,34 @@ const LoginPopup = ({setShowLogin}) => {
   }
 
 
-  const onLogin = async (event) => {
-    event.preventDefault()
-    let newUrl = url;
-    if (currState==="Login"){
-      newUrl += "/api/user/login"
-    }
-    else{
-      newUrl += "/api/user/register"
-    }
-
-    const response = await axios.post(newUrl,data);
-
-    if (response.data.success){
-      setToken(response.data.token);
-      localStorage.setItem("token",response.data.token)
-      setShowLogin(false)
-    }
-    else{
-      alert(response.data.message)
-    }
-
+const onLogin = async (event) => {
+  event.preventDefault();
+  let newUrl = url;
+  if (currState === "Login") {
+    newUrl += "/api/user/login";
+  } else {
+    newUrl += "/api/user/register";
   }
+
+  try {
+    const response = await axios.post(newUrl, data);
+
+    if (response.data.success) {
+      setToken(response.data.token);
+      localStorage.setItem("token", response.data.token);
+      setShowLogin(false);
+    } else {
+      alert(response.data.message); // ✅ CORRECTED
+    }
+  } catch (error) {
+    console.error("Login/Register failed:", error);
+    if (error.response && error.response.data && error.response.data.message) {
+      alert(error.response.data.message); // Show backend error
+    } else {
+      alert("Something went wrong. Please try again."); // Generic fallback
+    }
+  }
+};
 
 
 
