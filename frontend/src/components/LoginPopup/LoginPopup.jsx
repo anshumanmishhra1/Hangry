@@ -4,54 +4,49 @@ import { assets } from '../../assets/assets'
 import { StoreContext } from '../../context/StoreContext'
 import axios from "axios"
 
-const LoginPopup = ({setShowLogin}) => {
-
-  const {url,setToken} = useContext(StoreContext)
-
-
-  const [currState,setCurrState] = useState("Login")
-  const [data,setData] = useState({
-    name:"",
-    email:"test@gmail.com",
-    password:"123456789"
-  })
+const LoginPopup = ({ setShowLogin }) => {
+  const { url, setToken } = useContext(StoreContext);
+  const [currState, setCurrState] = useState('Login');
+  const [message, setMessage] = useState('');
+  const [data, setData] = useState({
+    name: '',
+    email: 'test@gmail.com',
+    password: '123456789',
+  });
 
   const onChangeHandler = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    setData(data=>({...data,[name]:value}))
-  }
+    setData((data) => ({ ...data, [name]: value }));
+  };
 
-
-const onLogin = async (event) => {
-  event.preventDefault();
-  let newUrl = url;
-  if (currState === "Login") {
-    newUrl += "/api/user/login";
-  } else {
-    newUrl += "/api/user/register";
-  }
-
-  try {
-    const response = await axios.post(newUrl, data);
-
-    if (response.data.success) {
-      setToken(response.data.token);
-      localStorage.setItem("token", response.data.token);
-      setShowLogin(false);
+  const onLogin = async (event) => {
+    event.preventDefault();
+    let newUrl = url;
+    if (currState === 'Login') {
+      newUrl += '/api/user/login';
     } else {
-      alert(response.data.message); // For custom error from server
+      newUrl += '/api/user/register';
     }
-  } catch (error) {
-    // Handle server or network errors
-    if (error.response && error.response.data && error.response.data.message) {
-      alert(error.response.data.message);
-    } else {
-      alert("Something went wrong. Please try again.");
-    }
-  }
-};
 
+    try {
+      const response = await axios.post(newUrl, data);
+
+      if (response.data.success) {
+        setToken(response.data.token);
+        localStorage.setItem('token', response.data.token);
+        setShowLogin(false);
+      } else {
+        setMessage(response.data.message); // show server message inline
+      }
+    } catch (error) {
+      if (error.response?.data?.message) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage('Something went wrong. Please try again.');
+      }
+    }
+  };
 
 
 
