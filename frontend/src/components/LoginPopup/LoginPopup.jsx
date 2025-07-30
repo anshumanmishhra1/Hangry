@@ -26,7 +26,6 @@ const LoginPopup = ({setShowLogin}) => {
 const onLogin = async (event) => {
   event.preventDefault();
   let newUrl = url;
-
   if (currState === "Login") {
     newUrl += "/api/user/login";
   } else {
@@ -35,25 +34,24 @@ const onLogin = async (event) => {
 
   try {
     const response = await axios.post(newUrl, data);
-    
+
     if (response.data.success) {
       setToken(response.data.token);
       localStorage.setItem("token", response.data.token);
       setShowLogin(false);
     } else {
-      alert(response.data.message || "Something went wrong!");
+      alert(response.data.message); // For custom error from server
     }
-
   } catch (error) {
-    console.error("Login/Register Error:", error);
-    
+    // Handle server or network errors
     if (error.response && error.response.data && error.response.data.message) {
       alert(error.response.data.message);
     } else {
-      alert("Server Error: " + error.message);
+      alert("Something went wrong. Please try again.");
     }
   }
 };
+
 
 
 
